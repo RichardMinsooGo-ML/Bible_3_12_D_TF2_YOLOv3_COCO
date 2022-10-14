@@ -20,10 +20,10 @@ TRAIN_CLASSES               = "./dataset/coco/coco.names"
 TRAIN_ANNOT_PATH            = "./dataset/coco/COCO2017_train.txt"
 TEST_ANNOT_PATH             = "./dataset/coco/COCO2017_val.txt"
 if YOLO_TYPE == "yolov3":
-    TRAIN_CHECKPOINTS_FOLDER    = "./checkpoints/yolo_v3_coco"
+    TRAIN_CHECKPOINTS_FOLDER    = "./checkpoints"
     DATA_TYPE = "yolo_v3_coco"
 elif YOLO_TYPE == "yolov4":
-    TRAIN_CHECKPOINTS_FOLDER    = "./checkpoints/yolo_v4_coco"
+    TRAIN_CHECKPOINTS_FOLDER    = "./checkpoints"
     DATA_TYPE = "yolo_v4_coco"
 
 if TRAIN_YOLO_TINY:
