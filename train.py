@@ -79,6 +79,7 @@ def main():
     
     optimizer = tf.keras.optimizers.Adam()
 
+
     def train_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)
@@ -198,7 +199,7 @@ def main():
 
     print("Val Loss // giou:{:7.2f}, conf:{:7.2f}, prob:{:7.2f}, total:{:7.2f}".
           format(giou_val/count, conf_val/count, prob_val/count, total_val/count))
-
+        
     # measure mAP of trained custom model
     mAP_model.load_weights(save_directory) # use keras weights
     get_mAP(mAP_model, testset, score_threshold=TEST_SCORE_THRESHOLD, iou_threshold=TEST_IOU_THRESHOLD)
