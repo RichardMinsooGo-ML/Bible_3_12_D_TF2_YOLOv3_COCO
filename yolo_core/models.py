@@ -99,73 +99,6 @@ def darknet53(input_data):
 
     return route_1, route_2, input_data
 
-def cspdarknet53(input_data):
-    input_data = DarknetConv2D(input_data, (3, 3,  3,  32), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (3, 3, 32,  64), downsample=True, activate_type="mish")
-
-    route = input_data
-    route = DarknetConv2D(route, (1, 1, 64, 64), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 64, 64), activate_type="mish")
-    for i in range(1):
-        input_data = DarknetResidual(input_data,  64,  32, 64, activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 64, 64), activate_type="mish")
-
-    input_data = tf.concat([input_data, route], axis=-1)
-    input_data = DarknetConv2D(input_data, (1, 1, 128, 64), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (3, 3, 64, 128), downsample=True, activate_type="mish")
-    route = input_data
-    route = DarknetConv2D(route, (1, 1, 128, 64), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 128, 64), activate_type="mish")
-    for i in range(2):
-        input_data = DarknetResidual(input_data, 64,  64, 64, activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 64, 64), activate_type="mish")
-    input_data = tf.concat([input_data, route], axis=-1)
-
-    input_data = DarknetConv2D(input_data, (1, 1, 128, 128), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (3, 3, 128, 256), downsample=True, activate_type="mish")
-    route = input_data
-    route = DarknetConv2D(route, (1, 1, 256, 128), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 256, 128), activate_type="mish")
-    for i in range(8):
-        input_data = DarknetResidual(input_data, 128, 128, 128, activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 128, 128), activate_type="mish")
-    input_data = tf.concat([input_data, route], axis=-1)
-
-    input_data = DarknetConv2D(input_data, (1, 1, 256, 256), activate_type="mish")
-    route_1 = input_data
-    input_data = DarknetConv2D(input_data, (3, 3, 256, 512), downsample=True, activate_type="mish")
-    route = input_data
-    route = DarknetConv2D(route, (1, 1, 512, 256), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 512, 256), activate_type="mish")
-    for i in range(8):
-        input_data = DarknetResidual(input_data, 256, 256, 256, activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 256, 256), activate_type="mish")
-    input_data = tf.concat([input_data, route], axis=-1)
-
-    input_data = DarknetConv2D(input_data, (1, 1, 512, 512), activate_type="mish")
-    route_2 = input_data
-    input_data = DarknetConv2D(input_data, (3, 3, 512, 1024), downsample=True, activate_type="mish")
-    route = input_data
-    route = DarknetConv2D(route, (1, 1, 1024, 512), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 1024, 512), activate_type="mish")
-    for i in range(4):
-        input_data = DarknetResidual(input_data, 512, 512, 512, activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 512, 512), activate_type="mish")
-    input_data = tf.concat([input_data, route], axis=-1)
-
-    input_data = DarknetConv2D(input_data, (1, 1, 1024, 1024), activate_type="mish")
-    input_data = DarknetConv2D(input_data, (1, 1, 1024, 512))
-    input_data = DarknetConv2D(input_data, (3, 3, 512, 1024))
-    input_data = DarknetConv2D(input_data, (1, 1, 1024, 512))
-
-    input_data = tf.concat([tf.nn.max_pool(input_data, ksize=13, padding='SAME', strides=1), tf.nn.max_pool(input_data, ksize=9, padding='SAME', strides=1)
-                            , tf.nn.max_pool(input_data, ksize=5, padding='SAME', strides=1), input_data], axis=-1)
-    input_data = DarknetConv2D(input_data, (1, 1, 2048, 512))
-    input_data = DarknetConv2D(input_data, (3, 3, 512, 1024))
-    input_data = DarknetConv2D(input_data, (1, 1, 1024, 512))
-
-    return route_1, route_2, input_data
-
 def darknet19_tiny(input_data):
     input_data = DarknetConv2D(input_data, (3, 3, 3, 16))
     input_data = MaxPool2D(2, 2, 'same')(input_data)
@@ -181,48 +114,6 @@ def darknet19_tiny(input_data):
     input_data = DarknetConv2D(input_data, (3, 3, 256, 512))
     input_data = MaxPool2D(2, 1, 'same')(input_data)
     input_data = DarknetConv2D(input_data, (3, 3, 512, 1024))
-
-    return route_1, input_data
-
-def cspdarknet53_tiny(input_data): # not sure how this should be called
-    input_data = DarknetConv2D(input_data, (3, 3, 3, 32), downsample=True)
-    input_data = DarknetConv2D(input_data, (3, 3, 32, 64), downsample=True)
-    input_data = DarknetConv2D(input_data, (3, 3, 64, 64))
-
-    route = input_data
-    input_data = route_group(input_data, 2, 1)
-    input_data = DarknetConv2D(input_data, (3, 3, 32, 32))
-    route_1 = input_data
-    input_data = DarknetConv2D(input_data, (3, 3, 32, 32))
-    input_data = tf.concat([input_data, route_1], axis=-1)
-    input_data = DarknetConv2D(input_data, (1, 1, 32, 64))
-    input_data = tf.concat([route, input_data], axis=-1)
-    input_data = MaxPool2D(2, 2, 'same')(input_data)
-
-    input_data = DarknetConv2D(input_data, (3, 3, 64, 128))
-    route = input_data
-    input_data = route_group(input_data, 2, 1)
-    input_data = DarknetConv2D(input_data, (3, 3, 64, 64))
-    route_1 = input_data
-    input_data = DarknetConv2D(input_data, (3, 3, 64, 64))
-    input_data = tf.concat([input_data, route_1], axis=-1)
-    input_data = DarknetConv2D(input_data, (1, 1, 64, 128))
-    input_data = tf.concat([route, input_data], axis=-1)
-    input_data = MaxPool2D(2, 2, 'same')(input_data)
-
-    input_data = DarknetConv2D(input_data, (3, 3, 128, 256))
-    route = input_data
-    input_data = route_group(input_data, 2, 1)
-    input_data = DarknetConv2D(input_data, (3, 3, 128, 128))
-    route_1 = input_data
-    input_data = DarknetConv2D(input_data, (3, 3, 128, 128))
-    input_data = tf.concat([input_data, route_1], axis=-1)
-    input_data = DarknetConv2D(input_data, (1, 1, 128, 256))
-    route_1 = input_data
-    input_data = tf.concat([route, input_data], axis=-1)
-    input_data = MaxPool2D(2, 2, 'same')(input_data)
-
-    input_data = DarknetConv2D(input_data, (3, 3, 512, 512))
 
     return route_1, input_data
 
@@ -272,64 +163,6 @@ def YOLOv3(input_layer, NUM_CLASS):
         
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4(input_layer, NUM_CLASS):
-    route_1, route_2, conv = cspdarknet53(input_layer)
-
-    route = conv
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-    conv = upsample(conv)
-    route_2 = DarknetConv2D(route_2, (1, 1, 512, 256))
-    conv = tf.concat([route_2, conv], axis=-1)
-
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-    conv = DarknetConv2D(conv, (3, 3, 256, 512))
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-    conv = DarknetConv2D(conv, (3, 3, 256, 512))
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-
-    route_2 = conv
-    conv = DarknetConv2D(conv, (1, 1, 256, 128))
-    conv = upsample(conv)
-    route_1 = DarknetConv2D(route_1, (1, 1, 256, 128))
-    conv = tf.concat([route_1, conv], axis=-1)
-
-    conv = DarknetConv2D(conv, (1, 1, 256, 128))
-    conv = DarknetConv2D(conv, (3, 3, 128, 256))
-    conv = DarknetConv2D(conv, (1, 1, 256, 128))
-    conv = DarknetConv2D(conv, (3, 3, 128, 256))
-    conv = DarknetConv2D(conv, (1, 1, 256, 128))
-
-    route_1 = conv
-    conv = DarknetConv2D(conv, (3, 3, 128, 256))
-    conv_sbbox = DarknetConv2D(conv, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    conv = DarknetConv2D(route_1, (3, 3, 128, 256), downsample=True)
-    conv = tf.concat([conv, route_2], axis=-1)
-
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-    conv = DarknetConv2D(conv, (3, 3, 256, 512))
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-    conv = DarknetConv2D(conv, (3, 3, 256, 512))
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-
-    route_2 = conv
-    conv = DarknetConv2D(conv, (3, 3, 256, 512))
-    conv_mbbox = DarknetConv2D(conv, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    conv = DarknetConv2D(route_2, (3, 3, 256, 512), downsample=True)
-    conv = tf.concat([conv, route], axis=-1)
-
-    conv = DarknetConv2D(conv, (1, 1, 1024, 512))
-    conv = DarknetConv2D(conv, (3, 3, 512, 1024))
-    conv = DarknetConv2D(conv, (1, 1, 1024, 512))
-    conv = DarknetConv2D(conv, (3, 3, 512, 1024))
-    conv = DarknetConv2D(conv, (1, 1, 1024, 512))
-
-    conv = DarknetConv2D(conv, (3, 3, 512, 1024))
-    conv_lbbox = DarknetConv2D(conv, (1, 1, 1024, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    return [conv_sbbox, conv_mbbox, conv_lbbox]
-
 def YOLOv3_tiny(input_layer, NUM_CLASS):
     # After the input layer enters the Darknet-53 network, we get three branches
     route_1, conv = darknet19_tiny(input_layer)
@@ -348,23 +181,6 @@ def YOLOv3_tiny(input_layer, NUM_CLASS):
     conv = tf.concat([conv, route_1], axis=-1)
     conv_mobj_branch = DarknetConv2D(conv, (3, 3, 128, 256))
     # conv_mbbox is used to predict medium size objects, shape = [None, 13, 13, 255]
-    conv_mbbox = DarknetConv2D(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    return [conv_mbbox, conv_lbbox]
-
-def YOLOv4_tiny(input_layer, NUM_CLASS):
-    route_1, conv = cspdarknet53_tiny(input_layer)
-
-    conv = DarknetConv2D(conv, (1, 1, 512, 256))
-
-    conv_lobj_branch = DarknetConv2D(conv, (3, 3, 256, 512))
-    conv_lbbox = DarknetConv2D(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    conv = DarknetConv2D(conv, (1, 1, 256, 128))
-    conv = upsample(conv)
-    conv = tf.concat([conv, route_1], axis=-1)
-
-    conv_mobj_branch = DarknetConv2D(conv, (3, 3, 128, 256))
     conv_mbbox = DarknetConv2D(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
     return [conv_mbbox, conv_lbbox]
@@ -392,50 +208,6 @@ def Create_Yolo(input_size=416, channels=3, training=False, CLASSES=YOLO_COCO_CL
 
     Yolo = tf.keras.Model(input_layer, output_tensors)
     return Yolo
-
-"""
-def decode(conv_output, NUM_CLASS, i=0):
-    # where i = 0, 1 or 2 to correspond to the three grid scales  
-    conv_shape       = tf.shape(conv_output)
-    batch_size       = conv_shape[0]
-    output_size      = conv_shape[1]
-
-    conv_output = tf.reshape(conv_output, (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
-
-    #conv_raw_dxdy = conv_output[:, :, :, :, 0:2] # offset of center position     
-    #conv_raw_dwdh = conv_output[:, :, :, :, 2:4] # Prediction box length and width offset
-    #conv_raw_conf = conv_output[:, :, :, :, 4:5] # confidence of the prediction box
-    #conv_raw_prob = conv_output[:, :, :, :, 5: ] # category probability of the prediction box
-    conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS), axis=-1)
-
-    # next need Draw the grid. Where output_size is equal to 13, 26 or 52  
-    #y = tf.range(output_size, dtype=tf.int32)
-    #y = tf.expand_dims(y, -1)
-    #y = tf.tile(y, [1, output_size])
-    #x = tf.range(output_size,dtype=tf.int32)
-    #x = tf.expand_dims(x, 0)
-    #x = tf.tile(x, [output_size, 1])
-    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
-    xy_grid = tf.expand_dims(tf.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
-    xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [batch_size, 1, 1, 3, 1])
-    xy_grid = tf.cast(xy_grid, tf.float32)
-    
-    #xy_grid = tf.concat([x[:, :, tf.newaxis], y[:, :, tf.newaxis]], axis=-1)
-    #xy_grid = tf.tile(xy_grid[tf.newaxis, :, :, tf.newaxis, :], [batch_size, 1, 1, 3, 1])
-    #y_grid = tf.cast(xy_grid, tf.float32)
-
-    # Calculate the center position of the prediction box:
-    pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
-    # Calculate the length and width of the prediction box:
-    pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
-
-    pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
-    pred_conf = tf.sigmoid(conv_raw_conf) # object box calculates the predicted confidence
-    pred_prob = tf.sigmoid(conv_raw_prob) # calculating the predicted probability category box object
-
-    # calculating the predicted probability category box object
-    return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
-"""
 
 def decode(conv_output, NUM_CLASS, i=0):
     # where i = 0, 1 or 2 to correspond to the three grid scales  
